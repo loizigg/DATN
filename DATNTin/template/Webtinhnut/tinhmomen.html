@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="d-md-flex justify-content-between align-items-center">
+    <nav aria-label="breadcrumb" class="d-inline-block mt-2 mt-sm-0">
+        <ul class="breadcrumb bg-transparent rounded mb-0 p-0">
+            <li class="breadcrumb-item text-capitalize"><a href="{% url "tinhmomen" %}">Tinh toán Moment</a></li>
+            <li class="breadcrumb-item text-capitalize active" aria-current="page">Tính toán</li>
+        </ul>
+    </nav>
+</div>
+<div class="col-md-12 grid-margin stretch-card mb-2" >
+    <div class="card">
+        <div class="card-body" style="background-color: darkgray;">
+            <div class="row">
+                <div class="col-lg-3 mb-2">
+                    <label>Tên cấu kiện: </label>
+                    <select class="form-control">
+                        <option>D1</option>
+                        <option>D2</option>
+                        <option>D3</option>
+                        <option>D4</option>
+                    </select>
+                </div>
+                <div class="col-lg-3 mb-2">
+                    <label>Tĩnh tải(kN): </label>
+                    <input class="form-control" placeholder="Nhập tĩnh tải" type="text" autocomplete="off">
+                </div>
+                <div class="col-lg-3 mb-2">
+                    <label>Hoạt tải(kN): </label>
+                    <input class="form-control" placeholder="Nhập hoạt tải" type="text" autocomplete="off">
+                </div>
+                <div class="col-lg-3 mb-2" >
+                    <br />
+                        <input type="submit" id="btnSearch" value="Tính toán" class="btn btn-block btn-primary submit-btn">
+                </div>
+                {% include "partials/_messages.html" %}
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-md-12 grid-margin stretch-card mb-2">
+    <div class="card">
+        <div class="card-body" style="background-color: darkgray;">
+            <div id="ListDataTable" class="table-responsive">
+                <table id="trans-listing" class="table table-bordered mt-2" style="width: 100%">
+                    <thead style="text-align:center">
+                        <tr class="table-primary text-center">
+                            <th class="vertical-mid">Mtt(KN.m)</th>
+                            <th class="vertical-mid">Mht(KN.m)</th>
+                            <th class="vertical-mid">Mdh(KN.m)</th>
+                            <th class="vertical-mid">Mtp(KN.m)</th>
+                            <th class="vertical-mid">Mnh(KN.m)</th>
+                        </tr>
+                    </thead>
+                    <tbody style="background-color: white;">
+                        
+                            <tr class="table text-center">
+                                <td class="vertical-mid">350.53</td>
+                                <td class="vertical-mid">263.22</td>
+                                <td class="vertical-mid">429.49</td>
+                                <td class="vertical-mid">613.75</td>
+                                <td class="vertical-mid">184.25</td>
+                            </tr>
+                       
+                    </tbody>
+                </table>
+                {% comment %} <div class="pagination-container">
+                    <div class="" style="color: white;">
+                        Showing page{{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                    </div>
+                
+                    <ul class="pagination align-right float-end mr-auto">
+                    {% if page_obj.has_previous %}
+                        <li{% if page_obj.number == 1 %} class="page-item active"{% endif %}><a class="page-link" href = "?page=1">&laquo; 1</a></li>
+                        <li class= "page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+                    {% endif %}
+                    {% if page_obj.has_next %}
+                        <li class"page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+                        <li class"page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages}} &raquo;</a></li>
+                    {% endif %}
+                    </ul>
+                </div>   {% endcomment %}
+            </div>
+        </div>
+    </div>
+</div>
+{% block script %}
+
+{% endblock script %}
+
+{% endblock content %}

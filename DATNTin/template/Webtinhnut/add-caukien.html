@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <nav aria-label = "breadcrumb">
+        <ol class = "breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url "caukien" %}">Cấu kiện</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Thêm mới cấu kiện</li>
+        </ol>
+    </nav>
+
+
+
+    <div class="card">
+        <div class="card-body">
+            <form action="{% url "add-caukien" %}" method="post">
+                {% include "partials/_messages.html" %}
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="">Tên cấu kiện: </label>
+                    <input type="text" class="form-control form-control-sm" name="" value= "">
+                </div>
+                <div class="form-group">
+                    <label for="">B: </label>
+                    <input type="number" class="form-control form-control-sm" name="" value= "">
+                    
+                </div>
+                <div class="form-group">
+                    <label for="">H: </label>
+                    <input type="number" class="form-control form-control-sm" name="" value= "">
+                </div>
+                <div class="form-group">
+                    <label for="">L: </label>
+                    <input type="number" class="form-control form-control-sm" name="" value= "">
+                </div>
+                <div class="form-group">
+                    <label for="">Cấp độ bền: </label>
+                    <select class="form-control">
+                        <option>--Bê tông--</option>
+                        <option>B20</option>
+                        <option>B25</option>
+                        <option>B45</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="">Nhóm thép: </label>
+                    <select class="form-control">
+                        <option>--Thép--</option>
+                        <option>AI</option>
+                        <option>AII</option>
+                        <option>CB400V</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="">Thép phía dưới: </label>
+                    <input type="text" class="form-control form-control-sm" name="" value= "">
+                </div>
+                <div class="form-group">
+                    <label for="">Chiều dày lớp bảo vệ phía dưới: </label>
+                    <input type="number" class="form-control form-control-sm" name="" value= "">
+                </div>
+                <div class="form-group">
+                    <label for="">Thép phía trên: </label>
+                    <input type="text" class="form-control form-control-sm" name="" value= "">
+                </div>
+                <div class="form-group">
+                    <label for="">Chiều dày lớp bảo vệ phía trên: </label>
+                    <input type="number" class="form-control form-control-sm" name="" value= "">
+                </div>
+                <br >
+                <input type="submit" value="Thêm" class="btn btn-primary btn-primary-sm">
+                <a href="{% url "caukien" %}" class = "btn btn-block btn-secondary">Hủy bỏ</a>
+            </form>
+        </div>
+    </div>
+
+</div>
+{% endblock content %}

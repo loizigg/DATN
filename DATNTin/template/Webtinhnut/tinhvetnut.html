@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="d-md-flex justify-content-between align-items-center">
+    <nav aria-label="breadcrumb" class="d-inline-block mt-2 mt-sm-0">
+        <ul class="breadcrumb bg-transparent rounded mb-0 p-0">
+            <li class="breadcrumb-item text-capitalize"><a href="{% url "tinhvetnut" %}">Tinh toán vết nứt</a></li>
+            <li class="breadcrumb-item text-capitalize active" aria-current="page">Tính toán</li>
+        </ul>
+    </nav>
+</div>
+<div class="col-md-12 grid-margin stretch-card mb-2" >
+    <div class="card">
+        <div class="card-body" style="background-color: darkgray;">
+            <div class="row">
+                <div class="col-lg-3 mb-2">
+                    <label>Tên cấu kiện: </label>
+                    <select class="form-control">
+                        <option>D1</option>
+                        <option>D2</option>
+                        <option>D3</option>
+                        <option>D4</option>
+                    </select>
+                </div>
+
+                <div class="col-lg-3 mb-2" >
+                    <br />
+                        <input type="submit" id="btnSearch" value="Tính toán" class="btn btn-block btn-primary submit-btn">
+                </div>
+                {% include "partials/_messages.html" %}
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-md-12 grid-margin stretch-card mb-2">
+    <div class="card">
+        <div class="card-body" style="background-color: darkgray;">
+            <div>
+                <div class="row">
+                    <div class="col-lg-3 mb-2">
+                        <label>Mcrc(KN.m): </label>
+                        <input class="form-control" placeholder="Mcrc" type="text" autocomplete="off">
+                    </div>
+                    <div class="col-lg-7 mb-2">
+                        <label>Kết luận việc xuất hiện vết nứt: </label>
+                        <input class="form-control" placeholder="Có/Không xuất hiện vết nứt" type="text" autocomplete="off">
+                    </div>
+                    <div class="col-lg-3 mb-2">
+                        <label>acrc = acrc1(kN): </label>
+                        <input class="form-control" placeholder="acrc" type="text" autocomplete="off">
+                    </div>
+                    <div class="col-lg-7 mb-2">
+                        <label>Kết luận chịu tải dài hạn(kN): </label>
+                        <input class="form-control" placeholder="Đủ/Không đủ chịu tải dài hạn" type="text" autocomplete="off">
+                    </div>
+                    <div class="col-lg-3 mb-2">
+                        <label>acrc = acrc1+acrc2-acrc3(kN): </label>
+                        <input class="form-control" placeholder="acrc" type="text" autocomplete="off">
+                    </div>
+                    <div class="col-lg-7 mb-2">
+                        <label>Kết luận chịu tải ngắn hạn(kN): </label>
+                        <input class="form-control" placeholder="Đủ/Không đủ chịu tải ngắn hạn" type="text" autocomplete="off">
+                    </div>
+            </div>
+        </div>
+        <a href="" class = "btn btn-block btn-primary" style="margin-right: 100px; float: right;">Xuất kết quả ra excel</a>
+    </div>
+</div>
+{% block script %}
+
+{% endblock script %}
+
+{% endblock content %}
