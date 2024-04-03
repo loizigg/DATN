@@ -15,7 +15,7 @@
             <div class="row">
                 <div class="col-lg-3 mb-2">
                     <label>Tên cấu kiện: </label>
-                    <input class="form-control" placeholder="Nhập tên cấu kiện" type="text" autocomplete="off">
+                    <input class="form-control" id="name" placeholder="Nhập tên cấu kiện" type="text" autocomplete="off">
                 </div>
                 <div class="col-lg-3 mb-2" >
                     <br />
@@ -44,27 +44,31 @@
                             <th class="vertical-mid">a(mm)</th>
                             <th class="vertical-mid">Thép trên</th>
                             <th class="vertical-mid">a'(mm)</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody style="background-color: white;">
-                        
+                        {% for caukien in page_obj %}
                             <tr class="table text-center">
-                                <td class="vertical-mid">D1</td>
-                                <td class="vertical-mid">200</td>
-                                <td class="vertical-mid">600</td>
-                                <td class="vertical-mid">6</td>
-                                <td class="vertical-mid">B25</td>
-                                <td class="vertical-mid">CB400V</td>
-                                <td class="vertical-mid">2Ф15</td>
-                                <td class="vertical-mid">60</td>
-                                <td class="vertical-mid">3Ф20</td>
-                                <td class="vertical-mid">30</td>
-                                
+                                <td class="vertical-mid">{{caukien.name}}</td>
+                                <td class="vertical-mid">{{caukien.b}}</td>
+                                <td class="vertical-mid">{{caukien.h}}</td>
+                                <td class="vertical-mid">{{caukien.L}}</td>
+                                <td class="vertical-mid">{{caukien.cben}}</td>
+                                <td class="vertical-mid">{{caukien.nthep}}</td>
+                                <td class="vertical-mid">{{caukien.thepd}}</td>
+                                <td class="vertical-mid">{{caukien.a}}</td>
+                                <td class="vertical-mid">{{caukien.thept}}</td>
+                                <td class="vertical-mid">{{caukien.a1}}</td>
+                                <td class="vertical-mid">
+                                    <a href="{% url "edit-caukien" caukien.id %}" class="btn btn-sm btn-secondary">Sửa</a>
+                                    <a href="{% url "delete-caukien" caukien.id %}" class="btn btn-sm btn-danger">Xóa</a>
+                                </td>
                             </tr>
-                       
+                        {% endfor %}
                     </tbody>
                 </table>
-                {% comment %} <div class="pagination-container">
+                <div class="pagination-container">
                     <div class="" style="color: white;">
                         Showing page{{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
                     </div>
@@ -79,13 +83,41 @@
                         <li class"page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages}} &raquo;</a></li>
                     {% endif %}
                     </ul>
-                </div>   {% endcomment %}
+                </div>
             </div>
         </div>
     </div>
 </div>
 {% block script %}
+<script>
+    document.getElementById("btnSearch").addEventListener("click", function() {
+        const name = document.getElementById("name").value.trim();
+        const urlParams = new URLSearchParams();
+        // Chỉ thêm các tham số có giá trị
+        if (name) {
+          urlParams.append("name", name);
+        }
 
+        // Lấy dữ liệu được lọc từ điểm cuối thích hợp
+        fetch(`/caukien?${urlParams.toString()}`)
+          .then(response => response.text())
+          .then(data => {
+            // Phân tích dữ liệu nhận được dưới dạng HTML
+            const parsedData = new DOMParser().parseFromString(data, "text/html");
+    
+            // Trích xuất phần thân bảng được lọc từ dữ liệu đã phân tích
+            const filteredTableBody = parsedData.querySelector("#ListDataTable tbody");
+    
+            // Thay thế nội dung tbody hiện có bằng dữ liệu đã lọc
+            document.getElementById("ListDataTable").querySelector("tbody").innerHTML = filteredTableBody.innerHTML;
+          })
+          .catch(error => {
+            // Hiển thị thông báo lỗi
+            console.error(error);
+            alert("Có lỗi xảy ra khi lấy dữ liệu. Vui lòng thử lại!");
+          });
+      });
+</script>
 {% endblock script %}
 
 {% endblock content %}

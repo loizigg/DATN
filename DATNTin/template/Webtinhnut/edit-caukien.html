@@ -4,7 +4,7 @@
     <nav aria-label = "breadcrumb">
         <ol class = "breadcrumb">
             <li class="breadcrumb-item"><a href="{% url "caukien" %}">Cấu kiện</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Thêm mới cấu kiện</li>
+            <li class="breadcrumb-item active" aria-current="page">Chỉnh sửa cấu kiện</li>
         </ol>
     </nav>
 
@@ -12,7 +12,7 @@
 
     <div class="card">
         <div class="card-body">
-            <form action="{% url "add-caukien" %}" method="post">
+            <form action="{% url "edit-caukien" caukien.id %}" method="post">
                 {% include "partials/_messages.html" %}
                 {% csrf_token %}
                 <div class="form-group">
@@ -67,7 +67,7 @@
                     <input type="number" class="form-control form-control-sm" name="a1" value= "{{values.a1}}">
                 </div>
                 <br >
-                <input type="submit" value="Thêm" class="btn btn-primary btn-primary-sm">
+                <input type="submit" value="Lưu" class="btn btn-primary btn-primary-sm">
                 <a href="{% url "caukien" %}" class = "btn btn-block btn-secondary">Hủy bỏ</a>
             </form>
         </div>
