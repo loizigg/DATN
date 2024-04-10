@@ -13,26 +13,26 @@
     <div class="card">
         <div class="card-body" style="background-color: darkgray;">
             <div class="row">
+                {% csrf_token %}
                 <div class="col-lg-3 mb-2">
                     <label>Tên cấu kiện: </label>
-                    <select class="form-control">
-                        <option>D1</option>
-                        <option>D2</option>
-                        <option>D3</option>
-                        <option>D4</option>
+                    <select class="form-control" id="caukien">
+                        {% for option in caukien %}
+                            <option value="{{option}}">{{option}}</option>
+                        {% endfor %}
                     </select>
                 </div>
                 <div class="col-lg-3 mb-2">
                     <label>Tĩnh tải(kN): </label>
-                    <input class="form-control" placeholder="Nhập tĩnh tải" type="text" autocomplete="off">
+                    <input class="form-control" placeholder="Nhập tĩnh tải" type="number" autocomplete="off" id="tinhtai">
                 </div>
                 <div class="col-lg-3 mb-2">
                     <label>Hoạt tải(kN): </label>
-                    <input class="form-control" placeholder="Nhập hoạt tải" type="text" autocomplete="off">
+                    <input class="form-control" placeholder="Nhập hoạt tải" type="number" autocomplete="off" id="hoattai">
                 </div>
                 <div class="col-lg-3 mb-2" >
                     <br />
-                        <input type="submit" id="btnSearch" value="Tính toán" class="btn btn-block btn-primary submit-btn">
+                        <input type="submit" id="btnTinhtoan" value="Tính toán" class="btn btn-block btn-primary submit-btn">
                 </div>
                 {% include "partials/_messages.html" %}
             </div>
@@ -46,6 +46,7 @@
                 <table id="trans-listing" class="table table-bordered mt-2" style="width: 100%">
                     <thead style="text-align:center">
                         <tr class="table-primary text-center">
+                            <th class="vertical-mid">Vị trí</th>
                             <th class="vertical-mid">Mtt(KN.m)</th>
                             <th class="vertical-mid">Mht(KN.m)</th>
                             <th class="vertical-mid">Mdh(KN.m)</th>
@@ -54,15 +55,24 @@
                         </tr>
                     </thead>
                     <tbody style="background-color: white;">
-                        
-                            <tr class="table text-center">
-                                <td class="vertical-mid">350.53</td>
-                                <td class="vertical-mid">263.22</td>
-                                <td class="vertical-mid">429.49</td>
-                                <td class="vertical-mid">613.75</td>
-                                <td class="vertical-mid">184.25</td>
-                            </tr>
-                       
+                        <tr class="table text-center">
+                            <td class="vertical-mid">Đầu dầm</td>
+                            <td class="vertical-mid">{{Mdau.Mttd}}</td>
+                            <td class="vertical-mid">{{Mdau.Mhtd}}</td>
+                            <td class="vertical-mid">{{Mdau.Mdhd}}</td>
+                            <td class="vertical-mid">{{Mdau.Mtpd}}</td>
+                            <td class="vertical-mid">{{Mdau.Mnhd}}</td>
+                        </tr>
+                   
+                    
+                        <tr class="table text-center">
+                            <td class="vertical-mid">Giữa dầm</td>
+                            <td class="vertical-mid">{{Mgiua.Mttg}}</td>
+                            <td class="vertical-mid">{{Mgiua.Mhtg}}</td>
+                            <td class="vertical-mid">{{Mgiua.Mdhg}}</td>
+                            <td class="vertical-mid">{{Mgiua.Mtpg}}</td>
+                            <td class="vertical-mid">{{Mgiua.Mnhg}}</td>
+                        </tr>
                     </tbody>
                 </table>
                 {% comment %} <div class="pagination-container">
@@ -86,7 +96,29 @@
     </div>
 </div>
 {% block script %}
-
+<script>
+    document.getElementById("btnTinhtoan").addEventListener("click", async function() {
+        const caukien = document.getElementById('caukien').value;
+        const tinhtai = parseFloat(document.getElementById('tinhtai').value);
+        const hoattai = parseFloat(document.getElementById('hoattai').value);
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value; // Sử dụng querySelector để đảm bảo độ tin cậy
+        if(isNaN(tinhtai)||isNaN(hoattai)){
+            alert("Vui lòng nhập giá trị cho tĩnh tải và hoạt tải.");
+            return;
+        }
+        const urlParams = new URLSearchParams();
+        urlParams.append("caukien",caukien);
+        urlParams.append("tinhtai",tinhtai);
+        urlParams.append("hoattai",hoattai);
+        fetch(`/tinhmomen?${urlParams.toString()}`)
+        .then(response => response.text())
+        .then(data => {
+           //Thay thế nội dung của khối listdata bằng dữ liệu được lọc
+           const parsedData = new DOMParser().parseFromString(data, "text/html");
+           const filteredTableBody = parsedData.querySelector("#ListDataTable tbody");
+           document.getElementById("ListDataTable").querySelector("tbody").innerHTML = filteredTableBody.innerHTML;
+        });
+    });
+</script>
 {% endblock script %}
-
 {% endblock content %}

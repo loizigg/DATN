@@ -1,15 +1,17 @@
 from django.shortcuts import render,redirect
 from django.contrib import messages
 from django.core.paginator import Paginator
-from openpyxl import load_workbook,Workbook
+# from openpyxl import load_workbook,Workbook
 from django.http import HttpResponse
 from .models import Tinhnut
+import psycopg2
+from psycopg2.extras import RealDictCursor
 # Create your views here.
 def index(request):
     return render(request, 'Webtinhnut/index.html')
 def caukien(request):
     name = request.GET.get("name")
-    caukien = Tinhnut.objects.all().order_by('name')
+    caukien = Tinhnut.objects.all().order_by('-id')
     if name:
         caukien = caukien.filter(name__icontains = name)
     paginator = Paginator(caukien, 5)
@@ -101,9 +103,69 @@ def delete_caukien(request,id):
     return redirect('caukien')
 
 def tinhmomen(request):
-    return render(request, 'Webtinhnut/tinhmomen.html')
+    if request.GET.get('caukien') != None:
+        caukien = request.GET.get('caukien')  # Sử dụng 'caukien' từ JavaScript
+        tinhtai = float(request.GET.get('tinhtai'))
+        hoattai = float(request.GET.get('hoattai'))
+        if caukien:
+            try:
+                L = Tinhnut.objects.get(name=caukien).L
+                Mttg = ((tinhtai * L) ** 2) / 12
+                Mhtg = ((hoattai * L) ** 2) / 12
+                Mdhg = Mttg+0.3*Mhtg
+                Mtpg = Mttg+Mhtg
+                Mnhg = (1-0.3)*Mhtg
+                Mttd = ((tinhtai * L) ** 2) / 8
+                Mhtd = ((hoattai * L) ** 2) / 8
+                Mdhd = Mttd+0.3*Mhtd
+                Mtpd = Mttd+Mhtd
+                Mnhd = (1-0.3)*Mhtd
+                Mgiua={
+                    'Mttg': round(Mttg,2),
+                    'Mhtg': round(Mhtg,2),
+                    'Mdhg':round(Mdhg,2),
+                    'Mtpg': round(Mtpg,2),
+                    'Mnhg': round(Mnhg,2)
+                }
+                Mdau={
+                    'Mttd': round(Mttd,2),
+                    'Mhtd': round(Mhtd,2),
+                    'Mdhd':round(Mdhd,2),
+                    'Mtpd': round(Mtpd,2),
+                    'Mnhd': round(Mnhd,2)
+                }
+                # context = {'Mtt': round(Mtt,2), 'Mht': round(Mht,2)}
+                context ={'Mgiua':Mgiua,'Mdau':Mdau}
+                return render(request, 'Webtinhnut/tinhmomen.html', context)
+            except (Tinhnut.DoesNotExist, Exception) as error:  # Xử lý các trường hợp ngoại lệ cụ thể & chung chung
+                context = {'error': str(error)}  # Truyền thông báo lỗi tới template
+                return render(request, 'Webtinhnut/tinhmomen.html', context)
 
+    # Xử lý yêu cầu GET (tùy chọn, để hiển thị ban đầu)
+    list_caukien = []
+    try:
+        caukien = Tinhnut.objects.all().values_list('name', flat=True)  # Truy xuất tất cả tên một cách hiệu quả
+        list_caukien = list(caukien)  # Chuyển queryset sang list cho ngữ cảnh template
+    except Exception as error:
+        print(error)
+        # Xem xét thêm thông báo thân thiện với người dùng cho template
 
+    context = {'caukien': list_caukien}
+    return render(request, 'Webtinhnut/tinhmomen.html', context)
 
 def tinhvetnut(request):
     return render(request, 'Webtinhnut/tinhvetnut.html')
+
+
+def get_connection():
+    connection = psycopg2.connect(
+            user="postgres",
+            password ="123456",
+            host="localhost",
+            port="5432",
+            database ="Webtinhnut"
+    )
+    return connection
+def close_connection(connection):
+    if connection:
+        connection.close()
