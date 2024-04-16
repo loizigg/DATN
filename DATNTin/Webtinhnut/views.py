@@ -6,6 +6,7 @@ from django.http import HttpResponse
 from .models import Tinhnut
 import psycopg2
 from psycopg2.extras import RealDictCursor
+import math
 # Create your views here.
 def index(request):
     return render(request, 'Webtinhnut/index.html')
@@ -104,7 +105,7 @@ def delete_caukien(request,id):
 
 def tinhmomen(request):
     if request.GET.get('caukien') != None:
-        caukien = request.GET.get('caukien')  # Sử dụng 'caukien' từ JavaScript
+        caukien = request.GET.get('caukien')
         tinhtai = float(request.GET.get('tinhtai'))
         hoattai = float(request.GET.get('hoattai'))
         if caukien:
@@ -134,27 +135,100 @@ def tinhmomen(request):
                     'Mtpd': round(Mtpd,2),
                     'Mnhd': round(Mnhd,2)
                 }
-                # context = {'Mtt': round(Mtt,2), 'Mht': round(Mht,2)}
                 context ={'Mgiua':Mgiua,'Mdau':Mdau}
                 return render(request, 'Webtinhnut/tinhmomen.html', context)
-            except (Tinhnut.DoesNotExist, Exception) as error:  # Xử lý các trường hợp ngoại lệ cụ thể & chung chung
-                context = {'error': str(error)}  # Truyền thông báo lỗi tới template
+            except (Tinhnut.DoesNotExist, Exception) as error:  
+                context = {'error': str(error)}  
                 return render(request, 'Webtinhnut/tinhmomen.html', context)
-
-    # Xử lý yêu cầu GET (tùy chọn, để hiển thị ban đầu)
     list_caukien = []
     try:
-        caukien = Tinhnut.objects.all().values_list('name', flat=True)  # Truy xuất tất cả tên một cách hiệu quả
-        list_caukien = list(caukien)  # Chuyển queryset sang list cho ngữ cảnh template
+        caukien = Tinhnut.objects.all().values_list('name', flat=True) 
+        list_caukien = list(caukien)  
     except Exception as error:
         print(error)
-        # Xem xét thêm thông báo thân thiện với người dùng cho template
-
+    
     context = {'caukien': list_caukien}
     return render(request, 'Webtinhnut/tinhmomen.html', context)
 
 def tinhvetnut(request):
-    return render(request, 'Webtinhnut/tinhvetnut.html')
+    if request.GET.get('caukien') != None:
+           caukien = request.GET.get('caukien')  # Sử dụng 'caukien' từ JavaScript
+           mdh = float(request.GET.get('mdh'))
+           mtp = float(request.GET.get('mtp'))
+           mnh = float(request.GET.get('mnh'))
+           if caukien:
+                try:
+                    b = Tinhnut.objects.get(name=caukien).b
+                    h = Tinhnut.objects.get(name=caukien).h
+                    L = Tinhnut.objects.get(name=caukien).L
+                    cben= Tinhnut.objects.get(name=caukien).cben
+                    nthep = Tinhnut.objects.get(name=caukien).nthep
+                    thepd = Tinhnut.objects.get(name=caukien).thepd
+                    a = Tinhnut.objects.get(name=caukien).a
+                    thept = Tinhnut.objects.get(name=caukien).thept
+                    a1 = Tinhnut.objects.get(name=caukien).a1
+                    listcben=["B15","B20","B22.5","B25","B30","B35","B40","B45","B50","B50"]
+                    Rb= [8.5,11.5,13,14.5,17,19.5,22,25,27.5,33]
+                    Rbt = [0.75,0.9,1,1.05,1.15,1.3,1.4,1.5,1.6,1.8]
+                    Rbser = [11,15,16.75,18.5,22,25.5,19,32,36,43]
+                    Rbtser = [1.1,1.35,1.45,1.55,1.75,1.95,2.1,2.25,2.45,2.6]
+                    Eb = [24000,27500,29000,30000,32500,34500,36000,37000,38000,39500]
+                    listnthep = ["AI","AII","AIII","AIV","CB240T","CB300V","CB400V","CB500V"]
+                    Rs= [225,280,365,510,210,260,350,435]
+                    Rsc=[225,280,365,450,210,260,350,400]
+                    Rsw=[175,225,290,405,170,210,280,300]
+                    Es =[200000,200000,200000,190000,200000,200000,200000,200000]
+                    for i, value in enumerate(listcben):
+                        if cben == value:
+                            aRb = Rb[i]
+                            aRbt = Rbt[i]
+                            aRbser = Rbser[i]
+                            aRbtser = Rbtser[i]
+                            aEb = Eb[i]
+                            break
+                    for i, value in enumerate(listnthep):
+                        if nthep == value:
+                            aRs = Rs[i]
+                            aRsc = Rsc[i]
+                            aRsw = Rsw[i]
+                            aEs = Es[i]
+                            break
+                    h0 = h - a
+                    h1 = h - a1
+                    clthepd = thepd.split("+")
+                    Asd = 0
+                    for clthep1 in clthepd:
+                        sl1,d1 = clthep1.split("Ф")
+                        sl1 = int(sl1)
+                        d1 = int(d1)
+                        dientich1 = (sl1 * math.pi *d1**2)/4
+                        Asd += dientich1
+                    clthept = thept.split("+")
+                    Ast = 0
+                    for clthep2 in clthept:
+                        sl2,d2 = clthep2.split("Ф")
+                        sl2 = int(sl2)
+                        d2 = int(d2)
+                        dientich2= (sl2 * math.pi *d2**2)/4
+                        Ast += dientich2
+                    anpha = Es/Eb
+                    
+                    # print(Ast,Asd,aRb,aRbser,aRbt,aRbtser,aEb,aRs,aRsc,aRsw,aEs)
+                        
+
+                    return render(request, 'Webtinhnut/tinhvetnut.html', context)
+                except (Tinhnut.DoesNotExist, Exception) as error:  
+                    context = {'error': str(error)}
+                    return render(request, 'Webtinhnut/tinhvetnut.html', context)
+
+    list_caukien = []
+    try:
+        caukien = Tinhnut.objects.all().values_list('name', flat=True)  
+        list_caukien = list(caukien)  
+    except Exception as error:
+        print(error)
+    context = {'caukien': list_caukien}
+    return render(request, 'Webtinhnut/tinhvetnut.html',context)
 
 
 def get_connection():
