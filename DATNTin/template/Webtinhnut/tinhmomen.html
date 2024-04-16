@@ -97,10 +97,40 @@
 </div>
 {% block script %}
 <script>
+    window.addEventListener("load", function() {
+        document.getElementById("btnTinhtoan").click();
+        const storedValuecaukien = localStorage.getItem("caukien");
+        const storedValuetinhtai = localStorage.getItem("tinhtai");
+        const storedValuehoattai = localStorage.getItem("hoattai");
+       if(storedValuecaukien || storedValuetinhtai || storedValuehoattai){
+        document.getElementById('caukien').value = storedValuecaukien;
+        document.getElementById('tinhtai').value = storedValuetinhtai;
+        document.getElementById('hoattai').value = storedValuehoattai;
+        loadData(storedValuecaukien,storedValuetinhtai,storedValuehoattai)
+       }
+    });
+
+    
+    function loadData(caukien,tinhtai,hoattai){
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentPage = urlParams.get("page") || 1; // Lấy giá trị hiện tại của tham số `page` hoặc mặc định là 1
+        fetch(`/tinhmomen?${urlParams.toString()}&page=${currentPage}`)
+        .then(response => response.text())
+        .then(data => {
+            const parsedData = new DOMParser().parseFromString(data, "text/html");
+            const filteredTableBody = parsedData.querySelector("#ListDataTable tbody");
+            document.getElementById("ListDataTable").querySelector("tbody").innerHTML = filteredTableBody.innerHTML;
+        })
+        .catch(error => console.error(error));
+    }
+
     document.getElementById("btnTinhtoan").addEventListener("click", async function() {
         const caukien = document.getElementById('caukien').value;
         const tinhtai = parseFloat(document.getElementById('tinhtai').value);
         const hoattai = parseFloat(document.getElementById('hoattai').value);
+        localStorage.setItem("caukien",caukien)
+        localStorage.setItem("tinhtai",tinhtai)
+        localStorage.setItem("hoattai",hoattai)
         const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
         if(isNaN(tinhtai)||isNaN(hoattai)){
             alert("Vui lòng nhập giá trị cho tĩnh tải và hoạt tải.");
