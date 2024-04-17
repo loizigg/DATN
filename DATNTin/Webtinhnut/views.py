@@ -115,12 +115,12 @@ def tinhmomen(request):
                 Mhtg = ((hoattai * L) ** 2) / 12
                 Mdhg = Mttg+0.3*Mhtg
                 Mtpg = Mttg+Mhtg
-                Mnhg = (1-0.3)*Mhtg
+                Mnhg = Mttg+0.3*Mhtg
                 Mttd = ((tinhtai * L) ** 2) / 8
                 Mhtd = ((hoattai * L) ** 2) / 8
                 Mdhd = Mttd+0.3*Mhtd
                 Mtpd = Mttd+Mhtd
-                Mnhd = (1-0.3)*Mhtd
+                Mnhd = Mttd+0.3*Mhtd
                 Mgiua={
                     'Mttg': round(Mttg,2),
                     'Mhtg': round(Mhtg,2),
@@ -202,7 +202,7 @@ def tinhvetnut(request):
                         sl1 = int(sl1)
                         d1 = int(d1)
                         dientich1 = (sl1 * math.pi *d1**2)/4
-                        Asd += dientich1
+                        Asd += dientich1/100
                     clthept = thept.split("+")
                     Ast = 0
                     for clthep2 in clthept:
@@ -210,12 +210,67 @@ def tinhvetnut(request):
                         sl2 = int(sl2)
                         d2 = int(d2)
                         dientich2= (sl2 * math.pi *d2**2)/4
-                        Ast += dientich2
-                    anpha = Es/Eb
+                        Ast += dientich2/100
+                    anpha = (aEs/aEb)
+                    yt = (b*h*h/2+anpha*Asd*100*a+anpha*Ast*100*h1)/(b*h+anpha*Ast*100+Asd*100*anpha)
+                    Ired = (((b*h**3)/12)+b*h*((h/2)-yt)**2+anpha*(Asd*100*(h0-yt)**2)+anpha*(Ast*100*(yt-a1)**2))/(1000**4)
+                    Ared = (b*h+anpha*Asd*100+anpha*Ast*100)/(1000**2)
+                    phi = 0.3
+                    y = 1.3
+                    Stred = (b*h*h/2+anpha*Asd*100*a+anpha*Ast*100*h1)/1000**3
+                    Muys = Asd/(b*h0/100)
+                    Muys1 = Ast/(b*h1/100)
+                    anphas1 = (0.0015*aEs)/aRbser
+                    anphas2 = (0.0015*aEs)/aRbser
+                    yc = h0*(((Muys*anphas2+Muys1*anphas1)**2+2*(Muys*anphas2+Muys1*anphas1*a1/h0))**0.5-(Muys*anphas2+Muys1*anphas1))
+                    dmax = max(d1,d2)
+                    hbt = min(max((h-yc),(2*a)),0.5*h)
+                    Abt = b*hbt
+                    Ls = (0.5*Abt*dmax)/(Asd*100)
+                    Ls = min(Ls,min(40*dmax,400))
+                    Ls = max(Ls,min(10*dmax,100))
+                    Ls = Ls/1000
+                    Mcrc = (y*Ared*Ired*aRbtser*1000)/Stred
+                    if Mcrc>= mtp:
+                        kqkiemtranut = "Không thỏa mãn điều kiện hình thành vết nứt"
+                    else:
+                        kqkiemtranut = "Thỏa mãn điều kiện hình thành vết nứt"
+                    phi11 = 1.4
+                    phi12 = 0.5
+                    phi13 = 1
+                    si = 1
+                    Iredcrc = (b*yc**3/3+Asd*100*anphas1*(h0-yc)**2+Ast*100*anphas2*(yc-a1)**2)/1000**4
+                    sigma1 = mdh*(h0-yc)/1000*anphas1/Iredcrc
+                    acrc1 = phi11*phi12*phi13*si*sigma1*Ls/(aEs*1000)*1000
+                    phi21 =1
+                    phi22 =0.5
+                    phi23= 1
+                    sigma2 = mtp*(h0-yc)/1000*anphas1/Iredcrc
+                    acrc2 = phi21*phi22*phi23*si*sigma2*Ls/(aEs*1000)*1000
+                    phi31 = 1
+                    phi32 = 0.5
+                    phi33 = 1
+                    sigma3 = mnh*(h0-yc)/1000*anphas1/Iredcrc
+                    acrc3 = phi31*phi32*phi33*si*sigma3*Ls/(aEs*1000)*1000
+                    acrcdh = acrc1
+                    acrcnh = acrc1+acrc2-acrc3
+                    if acrcdh<0.3:
+                        kqkiemtradh = "Đảm bảo điều kiện bề rộng vết nứt dài hạn (Bảng 17 TCVN 5574:2018)"
+                    else:
+                        kqkiemtradh = "Không đảm bảo điều kiện vết nứt dài hạn (Bảng 17 TCVN 5574:2018)"
                     
-                    # print(Ast,Asd,aRb,aRbser,aRbt,aRbtser,aEb,aRs,aRsc,aRsw,aEs)
-                        
-
+                    if acrcnh<0.4:
+                        kqkiemtranh="Đảm bảo điều kiện bề rộng vết nứt dài hạn (Bảng 17 TCVN 5574:2018)"
+                    else:
+                        kqkiemtranh="Không đảm bảo điều kiện bề rộng vết nứt dài hạn (Bảng 17 TCVN 5574:2018)"
+                    context= {
+                        'Mcrc':Mcrc,
+                        'acrcdh':acrcdh,
+                        'acrcnh':acrcnh,
+                        'kqkiemtranut':kqkiemtranut,
+                        'kqkiemtranh': kqkiemtranh,
+                        'kqkiemtradh':kqkiemtradh,
+                    }
                     return render(request, 'Webtinhnut/tinhvetnut.html', context)
                 except (Tinhnut.DoesNotExist, Exception) as error:  
                     context = {'error': str(error)}

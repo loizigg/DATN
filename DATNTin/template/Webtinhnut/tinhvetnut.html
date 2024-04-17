@@ -51,27 +51,27 @@
                 <div class="row">
                     <div class="col-lg-3 mb-2">
                         <label>Mcrc(KN.m): </label>
-                        <input class="form-control" placeholder="Mcrc" type="text" autocomplete="off" readonly = "True">
-                    </div>
+                        <input class="form-control" id="Mcrc" value="{{Mcrc}}" placeholder="Mcrc" type="text" autocomplete="off" readonly = "True">
+                    </div> 
                     <div class="col-lg-7 mb-2">
                         <label>Kết luận việc xuất hiện vết nứt: </label>
-                        <input class="form-control" placeholder="Có/Không xuất hiện vết nứt" type="text" autocomplete="off" readonly = "True">
+                        <input class="form-control" id = "Kqkiemtranut" value="{{kqkiemtranut}}" placeholder="Có/Không xuất hiện vết nứt" type="text" autocomplete="off" readonly = "True">
                     </div>
                     <div class="col-lg-3 mb-2">
                         <label>acrc = acrc1(kN): </label>
-                        <input class="form-control" placeholder="acrc" type="text" autocomplete="off" readonly = "True">
+                        <input class="form-control" id="Acrcdh" value="{{acrcdh}}" placeholder="acrc" type="text" autocomplete="off" readonly = "True">
                     </div>
                     <div class="col-lg-7 mb-2">
                         <label>Kết luận chịu tải dài hạn(kN): </label>
-                        <input class="form-control" placeholder="Đủ/Không đủ chịu tải dài hạn" type="text" autocomplete="off" readonly = "True">
+                        <input class="form-control" id="Kqkiemtradh" value="{{kqkiemtradh}}" placeholder="Đủ/Không đủ chịu tải dài hạn" type="text" autocomplete="off" readonly = "True">
                     </div>
                     <div class="col-lg-3 mb-2">
                         <label>acrc = acrc1+acrc2-acrc3(kN): </label>
-                        <input class="form-control" placeholder="acrc" type="text" autocomplete="off" readonly = "True">
+                        <input class="form-control" id="Acrcnh" value="{{acrcnh}}" placeholder="acrc" type="text" autocomplete="off" readonly = "True">
                     </div>
                     <div class="col-lg-7 mb-2">
                         <label>Kết luận chịu tải ngắn hạn(kN): </label>
-                        <input class="form-control" placeholder="Đủ/Không đủ chịu tải ngắn hạn" type="text" autocomplete="off" readonly = "True">
+                        <input class="form-control" id="Kqkiemtranh" value="{{kqkiemtranh}}" placeholder="Đủ/Không đủ chịu tải ngắn hạn" type="text" autocomplete="off" readonly = "True">
                     </div>
             </div>
         </div>
@@ -97,7 +97,19 @@
         fetch(`/tinhvetvut?${urlParams.toString()}`)
         .then(response => response.text())
         .then(data => {
-           
+            const parsedData = new DOMParser().parseFromString(data, "text/html");
+            const mcrcValue = parsedData.querySelector("#Mcrc").value;
+            const kqkiemtranutValue = parsedData.querySelector("#Kqkiemtranut").value;
+            const acrcdhValue = parsedData.querySelector("#Acrcdh").value;
+            const kqkiemtradhValue = parsedData.querySelector("#Kqkiemtradh").value;
+            const acrcnhValue = parsedData.querySelector("#Acrcnh").value;
+            const kqkiemtranhValue = parsedData.querySelector("#Kqkiemtranh").value;
+           document.getElementById('Mcrc').value = mcrcValue; 
+           document.getElementById('Kqkiemtranut').value = kqkiemtranutValue; 
+           document.getElementById('Acrcdh').value = acrcdhValue; 
+           document.getElementById('Kqkiemtradh').value = kqkiemtradhValue; 
+           document.getElementById('Acrcnh').value = acrcnhValue; 
+           document.getElementById('Kqkiemtranh').value = kqkiemtranhValue; 
         });
     });
 </script>
