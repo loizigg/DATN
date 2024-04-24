@@ -1,8 +1,8 @@
 from django.shortcuts import render,redirect
 from django.contrib import messages
 from django.core.paginator import Paginator
-# from openpyxl import load_workbook,Workbook
-from django.http import HttpResponse
+from openpyxl import load_workbook,Workbook
+from django.http import HttpResponse,HttpResponseBadRequest
 from .models import Tinhnut
 import psycopg2
 from psycopg2.extras import RealDictCursor
@@ -255,14 +255,69 @@ def tinhvetnut(request):
                     acrcdh = acrc1
                     acrcnh = acrc1+acrc2-acrc3
                     if acrcdh<0.3:
+                        sosanhdh = "<"
                         kqkiemtradh = "Đảm bảo điều kiện bề rộng vết nứt dài hạn (Bảng 17 TCVN 5574:2018)"
                     else:
+                        sosanhdh =">"
                         kqkiemtradh = "Không đảm bảo điều kiện vết nứt dài hạn (Bảng 17 TCVN 5574:2018)"
                     
                     if acrcnh<0.4:
+                        sosanhnh = "<"
                         kqkiemtranh="Đảm bảo điều kiện bề rộng vết nứt dài hạn (Bảng 17 TCVN 5574:2018)"
                     else:
+                        sosanhnh = ">"
                         kqkiemtranh="Không đảm bảo điều kiện bề rộng vết nứt dài hạn (Bảng 17 TCVN 5574:2018)"
+                    request.session['caukien'] = caukien
+                    request.session['b'] = b
+                    request.session['h'] = h
+                    request.session['cben'] = cben
+                    request.session['nthep'] = nthep
+                    request.session['mdh'] = mdh
+                    request.session['mtp'] = mtp
+                    request.session['mnh'] = mnh
+                    request.session['Ast'] = Ast
+                    request.session['a1'] = a1
+                    request.session['thept'] = thept
+                    request.session['Asd'] = Asd
+                    request.session['a'] = a
+                    request.session['thepd'] = thepd
+                    request.session['aRb'] = aRb
+                    request.session['aRbser'] = aRbser
+                    request.session['aEb'] = aEb
+                    request.session['aRbtser'] = aRbtser
+                    request.session['aRs'] = aRs
+                    request.session['aEs'] = aEs
+                    request.session['anpha'] = anpha
+                    request.session['h0'] = h0
+                    request.session['h1'] = h1
+                    request.session['yt'] = yt
+                    request.session['Ired'] = Ired
+                    request.session['Ared'] = Ared
+                    request.session['phi'] = phi
+                    request.session['y'] = y
+                    request.session['Stred'] = Stred
+                    request.session['yc'] = yc
+                    request.session['anphas1'] = anphas1
+                    request.session['Muys'] = Muys
+                    request.session['Muys1'] = Muys1
+                    request.session['Ls'] = Ls
+                    request.session['Abt'] = Abt
+                    request.session['hbt'] = hbt
+                    request.session['Mcrc'] = Mcrc
+                    request.session['kqkiemtranut'] = kqkiemtranut
+                    request.session['Iredcrc'] = Iredcrc
+                    request.session['sigma1'] = sigma1
+                    request.session['acrc1'] = acrc1
+                    request.session['sigma2'] = sigma2
+                    request.session['acrc2'] = acrc2
+                    request.session['sigma3'] = sigma3
+                    request.session['acrc3'] = acrc3
+                    request.session['acrcdh'] = acrcdh
+                    request.session['kqkiemtradh'] = kqkiemtradh
+                    request.session['acrcnh'] = acrcnh
+                    request.session['kqkiemtranh'] = kqkiemtranh
+                    request.session['sosanhdh'] = sosanhdh
+                    request.session['sosanhnh'] = sosanhnh
                     context= {
                         'Mcrc':Mcrc,
                         'acrcdh':acrcdh,
@@ -285,6 +340,129 @@ def tinhvetnut(request):
     context = {'caukien': list_caukien}
     return render(request, 'Webtinhnut/tinhvetnut.html',context)
 
+def export_excel(request):
+    caukien = request.session['caukien']
+    b = request.session['b']
+    h = request.session['h']
+    cben = request.session['cben']
+    nthep = request.session['nthep']
+    mdh = request.session['mdh']
+    mtp = request.session['mtp']
+    mnh = request.session['mnh']
+    Ast = request.session['Ast']
+    a1 = request.session['a1']
+    thept = request.session['thept']
+    Asd = request.session['Asd']
+    a = request.session['a']
+    thepd = request.session['thepd']
+    aRb = request.session['aRb']
+    aRbser = request.session['aRbser']
+    aEb = request.session['aEb']
+    aRbtser = request.session['aRbtser']
+    aRs = request.session['aRs']
+    aEs = request.session['aEs']
+    anpha = request.session['anpha']
+    h0 = request.session['h0']
+    h1 = request.session['h1']
+    yt = request.session['yt']
+    Ired = request.session['Ired']
+    Ared = request.session['Ared']
+    phi = request.session['phi']
+    y = request.session['y']
+    Stred = request.session['Stred']
+    yc = request.session['yc']
+    anphas1 = request.session['anphas1']
+    Muys = request.session['Muys']
+    Muys1 = request.session['Muys1']
+    Ls = request.session['Ls']
+    Abt = request.session['Abt']
+    hbt = request.session['hbt']
+    Mcrc = request.session['Mcrc']
+    kqkiemtranut = request.session['kqkiemtranut']
+    Iredcrc = request.session['Iredcrc']
+    sigma1 = request.session['sigma1']
+    acrc1 = request.session['acrc1']
+    sigma2 = request.session['sigma2']
+    acrc2 = request.session['acrc2']
+    sigma3 = request.session['sigma3']
+    acrc3 = request.session['acrc3']
+    acrcdh = request.session['acrcdh']
+    kqkiemtradh = request.session['kqkiemtradh']
+    acrcnh = request.session['acrcnh']
+    kqkiemtranh = request.session['kqkiemtranh']
+    sosanhdh = request.session['sosanhdh']
+    sosanhnh = request.session['sosanhnh']
+    try:
+        wb = load_workbook('D:\\DATNTin\\Bao-cao-Nut.xlsx')
+    except FileNotFoundError:
+        # Xử lý lỗi nếu file Excel không tồn tại
+        return HttpResponseBadRequest('File Excel không tồn tại')
+    sheet = wb.active
+    sheet['D11'].value = caukien
+    sheet['B18'].value = b
+    sheet['C18'].value = h
+    sheet['D18'].value = cben
+    sheet['E18'].value = nthep
+    sheet['F18'].value = mdh
+    sheet['G18'].value = mtp
+    sheet['B21'].value = Ast
+    sheet['C21'].value = a1
+    sheet['D21'].value = thept
+    sheet['E21'].value = Asd
+    sheet['F21'].value = a
+    sheet['G21'].value = thepd
+    sheet['C26'].value = aRb
+    sheet['F26'].value = aRbser
+    sheet['C27'].value = aEb
+    sheet['F27'].value = aRbtser
+    sheet['C31'].value = aRs
+    sheet['C32'].value = aEs
+    sheet['D33'].value = anpha
+    sheet['I36'].value = h0
+    sheet['I37'].value = h1
+    sheet['C40'].value = yt
+    sheet['E41'].value = Ired
+    sheet['E42'].value = Ared
+    sheet['C48'].value = mdh
+    sheet['C49'].value = mtp
+    sheet['C50'].value = mnh
+    sheet['D47'].value = phi
+    sheet['C53'].value = y
+    sheet['C54'].value = Stred
+    sheet['C56'].value = yc
+    sheet['I57'].value = anphas1
+    sheet['D58'].value = Muys
+    sheet['D59'].value = Muys1
+    sheet['C62'].value = Ls
+    sheet['D63'].value = Abt
+    sheet['C64'].value = hbt
+    sheet['C68'].value = Mcrc
+    sheet['B69'].value = kqkiemtranut
+    sheet['C74'].value = Iredcrc
+    sheet['E75'].value = sigma1
+    sheet['F76'].value = acrc1
+    sheet['C81'].value = Iredcrc
+    sheet['E82'].value = sigma2
+    sheet['F83'].value = acrc2
+    sheet['C88'].value = Iredcrc
+    sheet['E89'].value = sigma3
+    sheet['F90'].value = acrc3
+    sheet['F95'].value = acrcdh
+    sheet['B96'].value = kqkiemtradh
+    sheet['F99'].value = acrcnh
+    sheet['B101'].value = kqkiemtranh
+    sheet['H95'].value = sosanhdh
+    sheet['H99'].value = sosanhnh
+    # new_filename = f"Bao_cao_Nut_{acrcdh}.xlsx"
+
+    response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition']= 'attachment; filename="'+'Báo cáo nứt_new'+'.xlsx"'
+    wb.save(response)
+    # Thêm nội dung cho file Excel vào response (tùy chọn)
+
+    return response
 
 def get_connection():
     connection = psycopg2.connect(
