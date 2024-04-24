@@ -46,8 +46,8 @@
 <div class="col-md-12 grid-margin stretch-card mb-2">
     <div class="card">
         <div class="card-body" style="background-color: darkgray;">
-            <a href="" class = "btn btn-block btn-primary" style="100px;">Hiển thị chi tiết kết quả tính toán</a>
-            <a href="{% url "export-excel" %}" class = "btn btn-block btn-primary" style="100px;">Xuất excel</a>
+            {% comment %} <a href="" class = "btn btn-block btn-primary" style="100px;">Hiển thị chi tiết kết quả tính toán</a> {% endcomment %}
+            <a href="{% url "export-excel" %}" id = "btnexcel" class = "btn btn-block btn-primary" style="100px; display: none;">Xuất excel</a>
             <div>
                 <div class="row">
                     <div class="col-lg-3 mb-2">
@@ -80,6 +80,7 @@
 </div>
 {% block script %}
 <script>
+    const btnexcel = document.getElementById('btnexcel')
     document.getElementById("btnTinhtoan").addEventListener("click", async function() {
         const caukien = document.getElementById('caukien').value;
         const mdh = parseFloat(document.getElementById('Mdh').value);
@@ -89,6 +90,10 @@
         if(isNaN(mdh)||isNaN(mtp)||isNaN(mnh)){
             alert("Vui lòng nhập giá trị cho mô-men dài hạn, toàn phần và ngắn hạn.");
             return;
+        }
+        else{
+            btnexcel.style.display = 'block';
+            btnexcel.style = '100px';
         }
         const urlParams = new URLSearchParams();
         urlParams.append("caukien",caukien);
