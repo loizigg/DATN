@@ -8,4 +8,6 @@ urlpatterns = [
     path('delete-caukien/<int:id>',views.delete_caukien,name='delete-caukien'),
     path('tinhmomen',views.tinhmomen,name='tinhmomen'),
     path('tinhvetvut',views.tinhvetnut,name='tinhvetnut'),
+    path('export-excel',views.export_excel,name='export-excel'),
+    path('help',views.help_tt,name='help')
 ]
