@@ -463,7 +463,8 @@ def export_excel(request):
     # Thêm nội dung cho file Excel vào response (tùy chọn)
 
     return response
-
+def help_tt(request):
+    return render(request,'help.html')
 def get_connection():
     connection = psycopg2.connect(
             user="postgres",
